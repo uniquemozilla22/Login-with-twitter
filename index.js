@@ -14,7 +14,6 @@ app.use(express.json());
 
 
 routes(app);
-// All the Socket Server Socket Features are over here
 
 const port = process.env.NODE_ENV !== "DEVELOPMENT" ? process.env.PORT : 8000;
 
