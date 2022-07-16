@@ -7,11 +7,14 @@ const routes = (app,passport) =>{
     console.log("route Called")
     app.use("/login",LoginRoute)
     app.get("/social/twitter",passport.authenticate("twitter",{scope:["profile"]}))
-    app.get("/social/twitter/callback",passport.authenticate('twitter', { failureRedirect: '/login' }),(req, res)=>{
-        console.log(req.user)
-        const {screen_name, name , id} = req.user
-        const User = new UserSchema({username :})
+    app.get("/social/twitter/callback",passport.authenticate('twitter', { failureRedirect: '/social/twitter/failed' }),(req, res)=>{
+        console.log(req.user,"From the callback")
         res.redirect("http://localhost:3000")
+    })
+
+    app.get("/social/twitter/failed",(req, res)=>{
+        console.log(req.user)
+        res.send({success:false, login:"Failed"})
     })
 }
 

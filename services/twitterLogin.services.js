@@ -1,3 +1,4 @@
+import UserSchema from "../Database/Schema/User.schema.js";
 
 
 const twitterLogin =(passport, Strategy)=>{
@@ -6,8 +7,27 @@ const twitterLogin =(passport, Strategy)=>{
         consumerKey:process.env.TWITTER_API_KEY,
         consumerSecret:process.env.TWITTER_API_KEY_SECRET,
         callbackURL:"/social/twitter/callback"
-    },(token, tokenSecret, profile, cb)=>{
-        return cb(null,profile)
+    },async (token, tokenSecret, profile, cb)=>{
+
+        const {id , displayName , username } = profile;
+
+        console.log(id,displayName,username)
+        try{
+            const user  = await UserSchema.findOne({ socialID:profile.id});
+            if(!user)
+            {
+                const registeredUser  =  new UserSchema({ username :profile.username, name:profile.displayName, socialID:profile.id })
+                await registeredUser.save()
+            }
+            return cb(null, user);
+        }
+        catch(err)
+        {
+            console.log("error here at teitter services")
+            throw err;
+        }
+
+        
     }))
     passport.serializeUser((user, callback)=>{
         callback(null, user)
